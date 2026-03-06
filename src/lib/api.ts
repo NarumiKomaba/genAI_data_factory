@@ -18,11 +18,6 @@ export const apiClient = async (
     ...(options.headers as Record<string, string>),
   };
 
-  const apiKey = process.env.NEXT_PUBLIC_WANDB_API_KEY;
-  if (apiKey) {
-    headers["X-Wandb-Api-Key"] = apiKey;
-  }
-
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers,
