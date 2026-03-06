@@ -342,7 +342,7 @@ function JobDetailContent({ job_id }: { job_id: string }) {
           {/* 開始時刻 */}
           {displayJob.started_at && (
             <div className="text-sm text-muted-foreground">
-              開始: {new Date(displayJob.started_at).toLocaleString("ja-JP")}
+              開始: {new Date(displayJob.started_at).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}
             </div>
           )}
         </CardContent>
