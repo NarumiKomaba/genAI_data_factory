@@ -7,8 +7,8 @@ import { FileText, Copy, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/templates", label: "テンプレート", icon: FileText },
-  { href: "/jobs/augment", label: "データ増幅", icon: Copy },
+  { href: "/templates", label: "テンプレから量産", icon: FileText },
+  { href: "/jobs/augment", label: "サンプルから増幅", icon: Copy },
   { href: "/jobs", label: "ジョブ履歴", icon: History },
 ];
 
