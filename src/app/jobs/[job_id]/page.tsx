@@ -66,11 +66,12 @@ function JobDetailContent({ job_id }: { job_id: string }) {
   const [continueSubmitting, setContinueSubmitting] = useState(false);
 
   // API もキャッシュもない場合、localStorage の JobHistoryEntry からフォールバック
-  const historyFallback = useMemo<JobStatusResponse | null>(() => {
-    if (job) return null; // API or cache available
+  const [historyFallback, setHistoryFallback] = useState<JobStatusResponse | null>(null);
+  useEffect(() => {
+    if (job) return;
     const entry = getJobHistory().find((h) => h.job_id === job_id);
-    if (!entry) return null;
-    return {
+    if (!entry) return;
+    setHistoryFallback({
       job_id: entry.job_id,
       status: entry.status,
       progress: {
@@ -83,7 +84,7 @@ function JobDetailContent({ job_id }: { job_id: string }) {
       started_at: entry.created_at,
       target_dataset_name: entry.target_dataset_name,
       weave_dataset_url: entry.weave_dataset_url,
-    };
+    });
   }, [job, job_id]);
 
   const displayJob = job ?? historyFallback;
@@ -276,9 +277,11 @@ function JobDetailContent({ job_id }: { job_id: string }) {
   }
 
   const progress = displayJob.progress;
+  // テンプレートジョブは評価進捗、増幅ジョブは生成進捗
+  const progressCount = templateId ? progress.evaluated_count : progress.generated_count;
   const progressPercent =
     progress.target_count > 0
-      ? Math.round((progress.generated_count / progress.target_count) * 100)
+      ? Math.round((progressCount / progress.target_count) * 100)
       : 0;
 
   const statusConfig = STATUS_CONFIG[displayJob.status] ?? STATUS_CONFIG.pending;
@@ -309,21 +312,17 @@ function JobDetailContent({ job_id }: { job_id: string }) {
           {/* プログレスバー */}
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>生成進捗</span>
+              <span>{templateId ? "評価進捗" : "生成進捗"}</span>
               <span>
-                {progress.generated_count} / {progress.target_count} ({progressPercent}%)
+                {progressCount} / {progress.target_count} ({progressPercent}%)
               </span>
             </div>
             <Progress value={progressPercent} />
           </div>
 
-          {/* 内訳 (テンプレートジョブのみ: 評価あり) */}
+          {/* 合格/不合格 (テンプレートジョブのみ) */}
           {templateId && (
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-3 bg-muted rounded-lg">
-                <div className="text-2xl font-bold">{progress.evaluated_count}</div>
-                <div className="text-xs text-muted-foreground">評価済み</div>
-              </div>
+            <div className="grid grid-cols-2 gap-4">
               <div className="text-center p-3 bg-green-50 rounded-lg">
                 <div className="text-2xl font-bold text-green-600">
                   {progress.passed_count}
@@ -339,12 +338,17 @@ function JobDetailContent({ job_id }: { job_id: string }) {
             </div>
           )}
 
-          {/* 開始時刻 */}
-          {displayJob.started_at && (
-            <div className="text-sm text-muted-foreground">
-              開始: {new Date(displayJob.started_at).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}
-            </div>
-          )}
+          {/* プロジェクト名・開始時刻 */}
+          <div className="space-y-1 text-sm text-muted-foreground">
+            {projectName && (
+              <div>プロジェクト: <span className="font-medium text-foreground">{projectName}</span></div>
+            )}
+            {displayJob.started_at && (
+              <div>
+                開始: {new Date(displayJob.started_at).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
 

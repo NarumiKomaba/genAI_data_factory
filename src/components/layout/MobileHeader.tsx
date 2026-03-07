@@ -1,6 +1,7 @@
 "use client";
 
-import { Menu, Factory } from "lucide-react";
+import Image from "next/image";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface MobileHeaderProps {
@@ -13,14 +14,13 @@ export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
       <Button variant="ghost" size="icon" onClick={onMenuClick}>
         <Menu className="size-5" />
       </Button>
-      <div className="flex items-center gap-2">
-        <div className="flex items-center justify-center size-6 rounded-md bg-primary">
-          <Factory className="size-3 text-primary-foreground" />
-        </div>
-        <span className="font-bold text-sm tracking-tight">
-          GenAI Data Factory
-        </span>
-      </div>
+      <Image
+        src="/DataFactoryロゴ.png"
+        alt="GenAI Data Factory"
+        width={160}
+        height={36}
+        className="h-9 w-auto"
+      />
     </header>
   );
 }

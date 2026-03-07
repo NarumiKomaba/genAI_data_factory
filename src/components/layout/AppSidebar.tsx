@@ -1,13 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, Factory, Copy } from "lucide-react";
+import { FileText, Copy, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/templates", label: "テンプレート", icon: FileText },
   { href: "/jobs/augment", label: "データ増幅", icon: Copy },
+  { href: "/jobs", label: "ジョブ履歴", icon: History },
 ];
 
 interface AppSidebarProps {
@@ -20,24 +22,28 @@ export default function AppSidebar({ onNavigate }: AppSidebarProps) {
   return (
     <div className="flex flex-col h-full bg-sidebar text-sidebar-foreground">
       {/* Logo */}
-      <div className="flex items-center gap-3 h-16 px-5">
-        <div className="flex items-center justify-center size-9 rounded-xl bg-sidebar-primary">
-          <Factory className="size-5 text-sidebar-primary-foreground" />
-        </div>
-        <Link
-          href="/templates"
-          className="font-bold text-sm tracking-tight text-sidebar-foreground"
-          onClick={onNavigate}
-        >
-          GenAI Data Factory
-        </Link>
-      </div>
+      <Link
+        href="/templates"
+        className="block px-3 py-4"
+        onClick={onNavigate}
+      >
+        <Image
+          src="/DataFactoryロゴ.png"
+          alt="GenAI Data Factory"
+          width={240}
+          height={60}
+          className="w-full h-auto"
+          priority
+        />
+      </Link>
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-3 space-y-1.5">
         {navItems.map((item) => {
           const isActive =
-            pathname === item.href || pathname.startsWith(item.href + "/");
+            item.href === "/jobs"
+              ? pathname === "/jobs" || (pathname.startsWith("/jobs/") && !pathname.startsWith("/jobs/augment") && !pathname.startsWith("/jobs/new"))
+              : pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <Link
               key={item.href}

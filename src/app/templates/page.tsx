@@ -124,7 +124,7 @@ export default function TemplatesPage() {
 
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">
-                    {new Date(t.created_at).toLocaleString("ja-JP")}
+                    {new Date(t.created_at).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}
                   </span>
                   <Button
                     size="sm"
